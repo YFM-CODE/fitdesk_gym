@@ -1,4 +1,3 @@
-
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
@@ -8,7 +7,7 @@ $host = '127.0.0.1';
 $dbname = 'fitdesk_gym';
 $username = 'root';
 $password = '';
-$port = 3307;
+$port = 3306;
 
 try {
     $pdo = new PDO(

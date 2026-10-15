@@ -1,10 +1,10 @@
-
 <?php
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/sidebar.php';
 
 function e($value): string {
     return htmlspecialchars((string)($value ?? ''), ENT_QUOTES, 'UTF-8');
@@ -16,14 +16,17 @@ function redirect(string $url): void {
 }
 
 function require_login(): void {
-    if (empty($_SESSION['user']['id'])) {
-        redirect('index.php');
+    if (empty($_SESSION['user']['id']) && empty($_SESSION['user_id'])) {
+        $isModule = (basename(dirname($_SERVER['SCRIPT_FILENAME'] ?? '')) !== 'fitdesk_gym');
+        $redirectUrl = $isModule ? '../auth/login.php' : 'modules/auth/login.php';
+        redirect($redirectUrl);
     }
 }
 
 function require_admin(): void {
     require_login();
-    if (($_SESSION['user']['role'] ?? '') !== 'admin') {
+    $role = $_SESSION['user']['role'] ?? $_SESSION['role'] ?? '';
+    if ($role !== 'admin') {
         http_response_code(403);
         exit('Akses ditolak. Halaman ini khusus Admin.');
     }
